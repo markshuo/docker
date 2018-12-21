@@ -1,0 +1,46 @@
+ 
+1.安装docker
+#修改docker源  
+vim /etc/daemon.json   https://registry.docker-cn.com
+
+2.centos镜像
+启动
+docker run --privileged --cap-add SYS_ADMIN -e container=docker -it --name centos_1  -d  --restart=always centos_7.7_lnmp /usr/sbin/init
+#创建IP
+docker network create --subnet=172.17.0.0/16 mynetwork
+#指定IP
+docker run -itd --name networkTest1 --net mynetwork --ip 172.18.0.2 centos:latest /bin/bash
+
+
+docker run --name mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql:5.6
+
+
+docker run --name php-fpm -p 9000:9000 --link mysql:mysql -v ~/docker/www/html:/usr/share/nginx/html -v ~/docker/www/phpconf:/usr/local/etc  -d php:7.2-fpm
+
+docker run --name php-fpm -p 9000:9000 --privileged=true  -v ~/docker/www/html:/usr/local/nginx/html -v ~/docker/www/phpconf:/usr/local/php/etc -v ~/docker/www/phpconf/php.ini:/usr/local/php/etc/php.ini -d php:7.2
+
+
+
+nginx
+首先，把容器里面的 Nginx 配置文件拷贝到本地。
+
+$ docker container cp mynginx:/etc/nginx.
+
+上面命令的含义是，把mynginx容器的/etc/nginx拷贝到当前目录。不要漏掉最后那个点。
+
+执行完成后，当前目录应该多出一个nginx子目录。然后，把这个子目录改名为conf。
+
+$ mv nginx conf
+
+default.conf
+location ~ \.php$ {
+        #root           /usr/share/nginx/html;
+        fastcgi_pass   php-fpm:9000;
+        fastcgi_index  index.php;
+        fastcgi_param  SCRIPT_FILENAME  /usr/share/nginx/html/$fastcgi_script_name;
+        include        fastcgi_params;
+    }
+    
+docker run --name nginx -p 80:80 --link php-fpm:php-fpm  -v ~/docker/www/html:/usr/share/nginx/html -v ~/docker/www/conf:/etc/nginx/ -d nginx
+docker run --name nginx -p 80:80 --link php-fpm:php-fpm  -v ~/docker/www/html:/usr/local/nginx/html -v ~/docker/nginx/conf:/usr/local/nginx/conf -d nginx:1.15.7
+

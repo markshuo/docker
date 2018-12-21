@@ -1,0 +1,17 @@
+nginx:
+    build: ./nginx
+    ports:
+      - "80:80"
+    links:
+      - "php-fpm"
+    volumes:
+      - ~/docker/www/html:/usr/share/nginx/html
+      - ~/docker/www/conf:/usr/local/nginx
+
+php-fpm:
+    build: ./php
+    ports:
+      - "9000:9000"
+    volumes:
+      - ~/docker/www/html:/usr/local/nginx/html
+      - ~/docker/www/phpconf:/usr/local/php/etc

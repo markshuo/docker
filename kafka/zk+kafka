@@ -1,0 +1,95 @@
+安装java环境
+yum list java*
+yum -y install java-1.8.0-openjdk*
+
+zookeeper:
+1．启动
+sudo /usr/local/services/zookeeper/zookeeper1/zookeeper-3.4.9/bin/zkServer.sh start > /dev/null &
+sudo /usr/local/services/zookeeper/zookeeper2/zookeeper-3.4.9/bin/zkServer.sh start > /dev/null &
+sudo /usr/local/services/zookeeper/zookeeper3/zookeeper-3.4.9/bin/zkServer.sh start > /dev/null &
+２．连接
+bin/zkCli.sh -server localhost:2181
+
+kafka:
+下载：http://kafka.apache.org/downloads
+１.启动
+sudo /usr/local/services/kafka/kafka1/kafka_2.12-1.1.0/bin/kafka-server-start.sh /usr/local/services/kafka/kafka1/kafka_2.12-1.1.0/config/server.properties >/dev/null &
+
+sudo /usr/local/services/kafka/kafka2/kafka_2.12-1.1.0/bin/kafka-server-start.sh /usr/local/services/kafka/kafka2/kafka_2.12-1.1.0/config/server.properties > /dev/null &
+
+sudo /usr/local/services/kafka/kafka3/kafka_2.12-1.1.0/bin/kafka-server-start.sh /usr/local/services/kafka/kafka3/kafka_2.12-1.1.0/config/server.properties > /dev/null &
+２．测试
+创建topic
+sudo ./kafka-topics.sh --create --zookeeper localhost:2181,localhost:3181,localhost:4181 --replication-factor 2 --partitions 1 --topic testkafka
+列出已创建的topic列表
+./bin/kafka-topics.sh --list --zookeeper localhost:2181
+
+模拟客户端去发送消息
+./bin/kafka-console-producer.sh --broker-list 192.168.252.37:9092, 192.168.252.37:9093, 192.168.252.37:9094 --topic testkafka
+模拟客户端去接受消息
+./bin/kafka-console-consumer.sh --zookeeper localhost:2181, localhost:3181, localhost:4181 --from-beginning --topic testKafka
+
+php kafka
+
+安装zookeeper扩展 https://github.com/php-zookeeper/php-zookeeper
+
+
+一、安装librdkafka
+# cd /usr/local/src/
+# git clone https://github.com/edenhill/librdkafka.git
+# cd librdkafka
+# ./configure
+# make
+# make install
+# ln -s /usr/local/lib/librdkafka.so.1 /usr/lib/
+
+二、安装php-rdkafka
+# cd /usr/local/src/
+# git clone https://github.com/arnaud-lb/php-rdkafka.git
+# cd php-rdkafka
+# /usr/local/php/bin/phpize
+# ./configure --with-php-config=/usr/local/php/bin/php-config
+# make all -j 5
+# make install
+
+三、修改php.ini
+# vi /etc/php.ini
+
+##增加如下代码：##
+extension=rdkafka.so
+
+##查看是否安装成功：##
+# /usr/local/php/bin/php  -m
+
+
+#使用客户端进入zk
+./zkCli.sh -server 127.0.0.1:12181  #默认是不用加’-server‘参数的因为我们修改了他的端口
+
+#查看目录情况 执行“ls /”
+[zk: 127.0.0.1:12181(CONNECTED) 0] ls /
+
+#显示结果：[consumers, config, controller, isr_change_notification, admin, brokers, zookeeper, controller_epoch]
+'''
+上面的显示结果中：只有zookeeper是，zookeeper原生的，其他都是Kafka创建的
+'''
+
+#标注一个重要的
+[zk: 127.0.0.1:12181(CONNECTED) 1] get /brokers/ids/0
+
+
+
+Kafka producer的ack有3中机制，初始化producer时的producerconfig可以通过配置request.required.acks不同的值来实现。
+
+0：这意味着生产者producer不等待来自broker同步完成的确认继续发送下一条（批）消息。此选项提供最低的延迟但最弱的耐久性保证（当服务器发生故障时某些数据会丢失，如leader已死，但producer并不知情，发出去的信息broker就收不到）。
+
+1：这意味着producer在leader已成功收到的数据并得到确认后发送下一条message。此选项提供了更好的耐久性为客户等待服务器确认请求成功（被写入死亡leader但尚未复制将失去了唯一的消息）。
+
+-1：这意味着producer在follower副本确认接收到数据后才算一次发送完成。 
+此选项提供最好的耐久性，我们保证没有信息将丢失，只要至少一个同步副本保持存活。
+
+三种机制，性能依次递减 (producer吞吐量降低)，数据健壮性则依次递增。
+
+
+
+php zookeeper
+https://www.onmpw.com/tm/xwzj/prolan_228.html
