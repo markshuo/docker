@@ -19,7 +19,8 @@ docker run --name php-fpm -p 9000:9000 --link mysql:mysql -v ~/docker/www/html:/
 
 docker run --name php-fpm -p 9000:9000 --privileged=true  -v ~/docker/www/html:/usr/local/nginx/html -v ~/docker/www/phpconf:/usr/local/php/etc -v ~/docker/www/phpconf/php.ini:/usr/local/php/etc/php.ini -d php:7.2
 
-
+进入容器
+docker exec -it cnetos_two /bin/bash
 
 nginx
 首先，把容器里面的 Nginx 配置文件拷贝到本地。
