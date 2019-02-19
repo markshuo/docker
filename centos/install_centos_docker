@@ -1,4 +1,4 @@
-禁用Selinux, 修改/etc/selinux/config 文件，将SELINUX=enforcing改为SELINUX=disabled，重启机器即可
+****禁用Selinux, 修改/etc/selinux/config 文件，将SELINUX=enforcing改为SELINUX=disabled，重启机器即可
 
 把yum包更新到最新
 
@@ -174,3 +174,16 @@ $ sudo yum remove docker-ce
 
 $ sudo rm -rf /var/lib/docker
 您必须手动删除任何已编辑的配置文件
+
+
+使用Docker 中国加速器
+由于网络原因，我们在pull Image 的时候，从Docker Hub上下载会很慢。
+修改文件
+vim  /etc/docker/daemon.json
+#添加后：
+{
+    "registry-mirrors": ["https://registry.docker-cn.com"],
+    "live-restore": true
+}
+重起docker服务
+systemctl restart docker
