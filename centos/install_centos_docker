@@ -1,3 +1,7 @@
+禁用Selinux, 修改/etc/selinux/config 文件，将SELINUX=enforcing改为SELINUX=disabled，重启机器即可
+
+把yum包更新到最新
+
 获得CentOS的Docker CE
 要在CentOS上开始使用Docker CE，请确保 满足先决条件，然后 安装Docker。
 
