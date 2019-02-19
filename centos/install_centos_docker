@@ -1,0 +1,175 @@
+获得CentOS的Docker CE
+预计阅读时间： 10分钟
+要在CentOS上开始使用Docker CE，请确保 满足先决条件，然后 安装Docker。
+
+先决条件
+Docker EE客户
+要安装Docker Enterprise Edition（Docker EE），请转到 获取CentOS的Docker EE 而不是本主题。
+
+要了解有关Docker EE的更多信息，请参阅 Docker Enterprise Edition。
+
+OS要求
+要安装Docker CE，您需要CentOS 7的维护版本。不支持或测试存档版本。
+
+该centos-extras库必须启用。默认情况下，此存储库已启用，但如果已将其禁用，则需要 重新启用它。
+
+overlay2建议使用存储驱动程序。
+
+卸载旧版本
+较旧版本的Docker被称为docker或docker-engine。如果已安装，请卸载它们以及相关的依赖项。
+
+$ sudo yum remove docker \
+                  docker-client \
+                  docker-client-latest \
+                  docker-common \
+                  docker-latest \
+                  docker-latest-logrotate \
+                  docker-logrotate \
+                  docker-engine
+如果yum报告没有安装这些软件包，则可以。
+
+/var/lib/docker/保留包括图像，容器，卷和网络在内的内容。现在调用Docker CE包docker-ce。
+
+安装Docker CE
+您可以根据需要以不同方式安装Docker CE：
+
+大多数用户 设置Docker的存储库并从中进行安装，以便于安装和升级任务。这是推荐的方法。
+
+有些用户下载RPM软件包并 手动安装并完全手动管理升级。这在诸如在没有访问互联网的气隙系统上安装Docker的情况下非常有用。
+
+在测试和开发环境中，一些用户选择使用自动 便捷脚本来安装Docker。
+
+使用存储库安装
+在新主机上首次安装Docker CE之前，需要设置Docker存储库。之后，您可以从存储库安装和更新Docker。
+
+设置存储库
+安装所需的包。yum-utils提供了yum-config-manager 效用，并device-mapper-persistent-data和lvm2由需要 devicemapper存储驱动程序。
+
+$ sudo yum install -y yum-utils \
+  device-mapper-persistent-data \
+  lvm2
+使用以下命令设置稳定存储库。
+
+$ sudo yum-config-manager \
+    --add-repo \
+    https://download.docker.com/linux/centos/docker-ce.repo
+可选：启用夜间或测试存储库。
+
+这些存储库包含在docker.repo上面的文件中，但默认情况下处于禁用状态。您可以将它们与稳定存储库一起启用。以下命令启用夜间存储库。
+
+$ sudo yum-config-manager --enable docker-ce-nightly
+要启用测试通道，请运行以下命令：
+
+$ sudo yum-config-manager --enable docker-ce-test
+您可以通过运行带有标志的命令来禁用每晚或测试存储库 。要重新启用它，请使用该标志。以下命令禁用夜间存储库。yum-config-manager--disable--enable
+
+$ sudo yum-config-manager --disable docker-ce-nightly
+了解夜间和测试频道。
+
+安装DOCKER CE
+安装最新版本的Docker CE和containerd，或者转到下一步安装特定版本：
+
+$ sudo yum install docker-ce docker-ce-cli containerd.io
+如果提示接受GPG密钥，请验证指纹是否匹配060A 61C5 1B55 8A7F 742B 77AA C52F EB6B 621E 9F35，如果匹配，则接受该指纹 。
+
+有多个Docker存储库？
+
+如果您启用了多个Docker存储库，则在未指定yum install或 yum update命令中的版本的情况下安装或更新始终会安装尽可能高的版本，这可能不适合您的稳定性需求。
+
+Docker已安装但尚未启动。该docker组已创建，但没有用户添加到该组。
+
+要安装特定版本的Docker CE，请在repo中列出可用版本，然后选择并安装：
+
+一个。列出并对您的仓库中可用的版本进行排序。此示例按版本号对结果进行排序，从最高到最低，并被截断：
+
+$ yum list docker-ce --showduplicates | sort -r
+
+docker-ce.x86_64  3:18.09.1-3.el7                     docker-ce-stable
+docker-ce.x86_64  3:18.09.0-3.el7                     docker-ce-stable
+docker-ce.x86_64  18.06.1.ce-3.el7                    docker-ce-stable
+docker-ce.x86_64  18.06.0.ce-3.el7                    docker-ce-stable
+返回的列表取决于启用的存储库，并且特定于您的CentOS版本（.el7在此示例中以后缀表示）。
+
+湾 通过其完全限定的包名称安装特定版本，包名称（docker-ce）加上从第一个冒号（:）开始的版本字符串（第2列），直到第一个连字符，用连字符（-）分隔。例如，docker-ce-18.09.1。
+
+$ sudo yum install docker-ce-<VERSION_STRING> docker-ce-cli-<VERSION_STRING> containerd.io
+Docker已安装但尚未启动。该docker组已创建，但没有用户添加到该组。
+
+启动Docker。
+
+$ sudo systemctl start docker
+通过运行hello-world 映像验证是否正确安装了Docker CE 。
+
+$ sudo docker run hello-world
+此命令下载测试映像并在容器中运行它。当容器运行时，它会打印一条信息性消息并退出。
+
+Docker CE已安装并正在运行。您需要使用它sudo来运行Docker命令。继续Linux postinstall以允许非特权用户运行Docker命令和其他可选配置步骤。
+
+升级DOCKER CE
+要升级Docker CE，请按照安装说明选择要安装的新版本。
+
+从包安装
+如果您无法使用Docker的存储库来安装Docker，则可以下载.rpm适用于您的发行版的 文件并手动安装。每次要升级Docker CE时都需要下载新文件。
+
+转到 https://download.docker.com/linux/centos/7/x86_64/stable/Packages/ 并下载.rpm要安装的Docker版本的文件。
+
+注意：要安装每晚 或测试（预发布）包，stable请将上述URL中的单词更改为nightly或test。 了解夜间和测试频道。
+
+安装Docker CE，将下面的路径更改为您下载Docker软件包的路径。
+
+$ sudo yum install /path/to/package.rpm
+Docker已安装但尚未启动。该docker组已创建，但没有用户添加到该组。
+
+启动Docker。
+
+$ sudo systemctl start docker
+通过运行hello-world 映像验证是否正确安装了Docker CE 。
+
+$ sudo docker run hello-world
+此命令下载测试映像并在容器中运行它。当容器运行时，它会打印一条信息性消息并退出。
+
+Docker CE已安装并正在运行。您需要使用它sudo来运行Docker命令。继续执行Linux的安装后步骤，以允许非特权用户运行Docker命令和其他可选配置步骤。
+
+升级DOCKER CE
+要升级Docker CE，请下载较新的软件包文件并重复 安装过程，yum -y upgrade 而不是使用yum -y install和指向新文件。
+
+使用便捷脚本安装
+Docker在get.docker.com 和test.docker.com上提供了便捷脚本，用于快速，非交互地将Docker CE的边缘和测试版本安装到开发环境中。脚本的源代码位于 docker-install存储库中。 建议不要在生产环境中使用这些脚本，在使用它们之前，您应该了解潜在的风险：
+
+脚本需要root或sudo特权才能运行。因此，在运行脚本之前，应仔细检查和审核脚本。
+这些脚本会尝试检测您的Linux发行版和版本，并为您配置包管理系统。此外，脚本不允许您自定义任何安装参数。从Docker的角度或您自己组织的指导方针和标准来看，这可能会导致配置不受支持。
+脚本安装包管理器的所有依赖项和建议，而不要求确认。这可能会安装大量软件包，具体取决于主机的当前配置。
+该脚本不提供选项来指定要安装的Docker版本，并安装在“边缘”通道中发布的最新版本。
+如果已使用其他机制在主机上安装了Docker，请不要使用便捷脚本。
+此示例使用get.docker.com上的脚本在Linux上安装最新版本的Docker CE。要安装最新的测试版本，请改用test.docker.com。在下面的每个命令中，替换每次出现的getwith test。
+
+警告：
+
+始终检查从Internet下载的脚本，然后在本地运行它们。
+
+$ curl -fsSL https://get.docker.com -o get-docker.sh
+$ sudo sh get-docker.sh
+
+<output truncated>
+如果您想将Docker用作非root用户，您现在应该考虑将您的用户添加到“docker”组，例如：
+
+  sudo usermod -aG docker your-user
+请记得注销并重新登录才能生效！
+
+警告：
+
+将用户添加到“docker”组会授予他们运行容器的能力，这些容器可用于获取Docker主机上的root权限。 有关更多信息，请参阅 Docker守护程序攻击面。
+
+已安装Docker CE。它会自动在DEB基于发行版的分发上启动。在RPM基于On的 基础上，您需要使用相应的systemctl或service命令手动启动它 。如消息所示，非root用户默认情况下无法运行Docker命令。
+
+使用便捷脚本后升级DOCKER
+如果您使用便捷脚本安装了Docker，则应直接使用软件包管理器升级Docker。重新运行便捷脚本没有任何好处，如果它尝试重新添加已添加到主机的存储库，则可能会导致问题。
+
+卸载Docker CE
+卸载Docker包：
+
+$ sudo yum remove docker-ce
+主机上的图像，容器，卷或自定义配置文件不会自动删除。要删除所有图像，容器和卷：
+
+$ sudo rm -rf /var/lib/docker
+您必须手动删除任何已编辑的配置文件
