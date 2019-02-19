@@ -44,9 +44,7 @@ $ sudo yum remove docker \
 设置存储库
 安装所需的包。yum-utils提供了yum-config-manager 效用，并device-mapper-persistent-data和lvm2由需要 devicemapper存储驱动程序。
 
-$ sudo yum install -y yum-utils \
-  device-mapper-persistent-data \
-  lvm2
+$ sudo yum install -y yum-utils device-mapper-persistent-data lvm2
 使用以下命令设置稳定存储库。
 
 $ sudo yum-config-manager \
