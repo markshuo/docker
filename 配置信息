@@ -45,3 +45,8 @@ location ~ \.php$ {
 docker run --name nginx -p 80:80 --link php-fpm:php-fpm  -v ~/docker/www/html:/usr/share/nginx/html -v ~/docker/www/conf:/etc/nginx/ -d nginx
 docker run --name nginx -p 80:80 --link php-fpm:php-fpm  -v ~/docker/www/html:/usr/local/nginx/html -v ~/docker/nginx/conf:/usr/local/nginx/conf -d nginx:1.15.7
 
+
+
+安装官方源
+docker pull nginx 
+docker run --name nginx_one -p 8080:80  -v ~/www/html:/usr/share/nginx/html -v ~/www/docker/nginx:/etc/nginx/ -d nginx
