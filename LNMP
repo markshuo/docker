@@ -77,7 +77,10 @@ docker cp nginx:/etc/nginx .
 3.mysql
   docker pull mysql 
   
-  
-  
+ 4.使用docker-compose编排容器
+ 
+  安装docker-compose:
+    sudo curl -L "https://github.com/docker/compose/releases/download/1.23.2/docker-compose > /usr/local/bin/docker-compose
+    docker-compose version
   
   
