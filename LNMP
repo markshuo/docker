@@ -82,5 +82,36 @@ docker cp nginx:/etc/nginx .
   安装docker-compose:
     sudo curl -L "https://github.com/docker/compose/releases/download/1.23.2/docker-compose > /usr/local/bin/docker-compose
     docker-compose version
-  
+    docker-compose.yml:
+  db_server:
+    image: docker.io/mysql:5.7.21
+    container_name: mysql
+    environment:
+        MYSQL_ROOT_PASSWORD: 123456
+    ports:
+        - "3306:3306"
+    volumes:
+        - /mnt/mysql:/var/lib/mysql
+
+php-fpm:
+    image: docker.io/php:7.2-fpm
+    container_name: php
+    links:
+        - db_server:mysql
+    ports:
+        - "9000:9000"
+    volumes:
+        - ~/www/html:/usr/share/nginx/html
+        - /mnt/php:/usr/local/etc/php
+web_server:
+    image: docker.io/nginx
+    container_name: nginx
+    links:
+        - php:php
+    ports:
+        - "80:80"
+        - "443:443"
+    volumes:
+        - ~/www/html:/usr/share/nginx/html
+        - ~/www/docker/nginx:/etc/nginx
   
