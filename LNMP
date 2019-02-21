@@ -28,6 +28,15 @@
           # 如果安装的扩展需要自定义配置时
           && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
           && docker-php-ext-install -j$(nproc) gd
+          ---------------------------------------------
+                  进入php容器docker exec -it php /bash/bin
+                  执行 docker-php-ext-install pdo pdo_mysql
+                  如果报  /usr/local/bin/docker-php-ext-enable: cannot create /usr/local/etc/php/conf.d/docker-php-ext-pdo_mysql.ini: Directory nonexistent    
+                  解决方案：
+                     直接在/usr/local/etc/php目录下面新建 conf.d目录和对应的docker-php-ext-pdo_msql.ini文件
+                  其中docker-php-ext-pdo_msql.ini的内容为：
+                  extension=pdo_mysql.so
+          ---------------------------------------------
       *********************************
     b.PECL 扩展
       因为一些扩展并不包含在 PHP 源码文件中，所有需要使用 PECL（PHP 的扩展库仓库，通过 PEAR 打包）。用 pecl install 安装扩展，然后再用官方提供的 docker-php-ext-enable 快捷脚本来启用扩展，如下示例：
@@ -67,6 +76,7 @@
                 && docker-php-ext-install /tmp/xcache \
                 && rm -r /tmp/xcache
             *********************************
+            
             
 2.nginx
 docker pull nginx 
