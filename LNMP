@@ -81,9 +81,11 @@ docker cp nginx:/etc/nginx .
  
   安装docker-compose:
     sudo curl -L "https://github.com/docker/compose/releases/download/1.23.2/docker-compose > /usr/local/bin/docker-compose
+    chmod u+x docker-compose
     docker-compose version
+    *****
     docker-compose.yml:
-  db_server:
+db_server:
     image: docker.io/mysql:5.7.21
     container_name: mysql
     environment:
@@ -91,8 +93,7 @@ docker cp nginx:/etc/nginx .
     ports:
         - "3306:3306"
     volumes:
-        - /mnt/mysql:/var/lib/mysql
-
+        - ~/www/docker/mysql:/var/lib/mysql
 php-fpm:
     image: docker.io/php:7.2-fpm
     container_name: php
@@ -102,7 +103,7 @@ php-fpm:
         - "9000:9000"
     volumes:
         - ~/www/html:/usr/share/nginx/html
-        - /mnt/php:/usr/local/etc/php
+        - ~/www/docker/php:/usr/local/etc/php
 web_server:
     image: docker.io/nginx
     container_name: nginx
@@ -115,3 +116,4 @@ web_server:
         - ~/www/html:/usr/share/nginx/html
         - ~/www/docker/nginx:/etc/nginx
   
+  %遇到的坑： File not found.  php-fpm和nginx指定目录要一致
