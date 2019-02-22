@@ -51,3 +51,17 @@ docker inspect <container id>
 安装官方源
 docker pull nginx 
 docker run --name nginx -p 8080:80  -v ~/www/html:/usr/share/nginx/html -v ~/www/docker/nginx:/etc/nginx/ -d nginx
+
+docker源的修改：
+   a.修改或新增 /etc/docker/daemon.json
+
+   # vi /etc/docker/daemon.json
+
+   {
+    "registry-mirrors": ["http://hub-mirror.c.163.com"] #网易
+   }
+   systemctl restart docker
+   
+   b.yum install -y yum-utils device-mapper-persistent-data lvm2
+   yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo #阿里云
+
